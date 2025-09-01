@@ -32,20 +32,11 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Set working directory
 WORKDIR /var/www
 
-# Copy composer files first for better caching
-COPY composer.json composer.lock* ./
-
-# Install Composer dependencies
-RUN composer install --no-dev --optimize-autoloader --no-interaction
-
-# Copy existing application directory contents
+# Copy all application files
 COPY . /var/www
 
 # Copy existing application directory permissions
 COPY --chown=www-data:www-data . /var/www
-
-# Generate application key if not exists
-RUN php artisan key:generate --ansi || true
 
 # Set proper permissions
 RUN chmod -R 775 storage bootstrap/cache

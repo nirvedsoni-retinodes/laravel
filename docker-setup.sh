@@ -8,16 +8,28 @@ if [ ! -f .env ]; then
     cp .env.example .env
 fi
 
+# Stop any existing containers
+echo "🛑 Stopping existing containers..."
+docker-compose down
+
+# Remove any existing volumes to start fresh
+echo "🧹 Cleaning up existing volumes..."
+docker-compose down -v
+
 # Build and start containers
 echo "🔨 Building and starting Docker containers..."
 docker-compose up --build -d
 
 # Wait for database to be ready
 echo "⏳ Waiting for database to be ready..."
-sleep 30
+sleep 45
 
-# Install Composer dependencies in container
-echo "�� Installing Composer dependencies in container..."
+# Check if containers are running
+echo "🔍 Checking container status..."
+docker-compose ps
+
+# Install Composer dependencies in container (if not already installed)
+echo "📦 Installing Composer dependencies in container..."
 docker-compose exec app composer install --no-interaction --optimize-autoloader
 
 # Generate application key
@@ -27,6 +39,10 @@ docker-compose exec app php artisan key:generate
 # Set proper permissions
 echo "🔐 Setting proper permissions..."
 docker-compose exec app chmod -R 775 storage bootstrap/cache
+
+# Create storage link
+echo "🔗 Creating storage link..."
+docker-compose exec app php artisan storage:link
 
 # Run migrations and seeders
 echo "🗄️ Running database migrations and seeders..."

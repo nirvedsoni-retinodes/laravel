@@ -38,6 +38,9 @@ COPY . /var/www
 # Copy existing application directory permissions
 COPY --chown=www-data:www-data . /var/www
 
+# Create necessary directories if they don't exist
+RUN mkdir -p storage/app/public storage/framework/cache storage/framework/sessions storage/framework/views storage/logs bootstrap/cache
+
 # Set proper permissions
 RUN chmod -R 775 storage bootstrap/cache
 

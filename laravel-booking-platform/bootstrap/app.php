@@ -29,6 +29,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
             'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
+            'check.installed' => \App\Http\Middleware\CheckInstalled::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

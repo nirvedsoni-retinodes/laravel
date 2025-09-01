@@ -13,6 +13,17 @@ services:
       - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
     networks:
       - laravel_network
+    depends_on:
+      - db
+      - redis
+    environment:
+      - APP_ENV=local
+      - APP_DEBUG=true
+      - DB_HOST=db
+      - DB_DATABASE=laravel_booking
+      - DB_USERNAME=laravel_user
+      - DB_PASSWORD=password
+      - REDIS_HOST=redis
 
   nginx:
     image: nginx:alpine
@@ -25,6 +36,8 @@ services:
       - ./docker/nginx/conf.d/:/etc/nginx/conf.d/
     networks:
       - laravel_network
+    depends_on:
+      - app
 
   db:
     image: mysql:8.0
@@ -44,6 +57,7 @@ services:
       - dbdata:/var/lib/mysql
     networks:
       - laravel_network
+    command: --default-authentication-plugin=mysql_native_password
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
